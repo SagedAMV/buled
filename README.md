@@ -7,21 +7,23 @@
 **`UniHub-v1.0.0-release-full.apk`** — نسخة 1.0.0 (versionCode 1)
 
 - نمط البناء: **releaseFull** — جودة Release نفسها (موقّعة بمفتاح الإصدار
-  `unihub-release.jks`، توقيع v2 مُتحقَّق منه بـ apksigner) **بلا تصغير شيفرة
-  ولا تصغير موارد** (R8 معطّل) — النسخة الكاملة كما طلب المستخدم.
-- الحجم: ~13.9 MB
+  `unihub-release.jks`، توقيع v2 مُتحقَّق منه بـ apksigner، محاذاة zipalign
+  مُتحقَّق منها) **بلا تصغير شيفرة ولا تصغير موارد** (R8 معطّل) — النسخة
+  الكاملة فقط، وفق طلب المستخدم (أُزيلت النسخة المصغّرة الأرشيفية من هذا
+  المستودع لأن الطلب الحالي «النسخة الكاملة فقط»).
+- الحجم: ~13.9 MB (13,942,937 بايت)
 - المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 35
+- موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA
 
-### التحقق المرافق للبناء (جلسة التحقق العميق الحالية)
+### التحقق العميق المرافق للبناء (جلسة 2026-09-27)
 
-- ترجمة Kotlin + KSP (Room/Hilt): بلا أخطاء
-- 36 اختبار وحدة على المتغيّر releaseFull: خضراء كلها (0 إخفاق)
-- lintVital: ناجح ضمن مسار assembleReleaseFull
-- SHA-256: `d9d282842c4b6b2618abd80bb58acee4855896b2b1ffd9fe58d7a1b5716b60f6`
-- المصدر: `SagedAMV/app_new@2c4f53b`
-
-## النسخة المصغّرة (أرشيفية)
-
-**`UniHub-v1.0.0-release-minified.apk`** — Release مع `isMinifyEnabled = true`
-و`isShrinkResources = true` (R8 full mode) — ~2.8 MB. قواعد الحماية في
-`app/proguard-rules.pro` بمستودع الكود.
+- فحص بناء عميق مستقل: ترجمة Kotlin + KSP (Room/Hilt) على المتغيّر releaseFull
+- إصلاح فشل بناء جوهري وُجد أثناء الفحص: نفاد Metaspace
+  (AssertionError: Metaspace) أثناء compileReleaseFullKotlin — رُفع سقف
+  MaxMetaspaceSize من 320m إلى 512m في gradle.properties (التعديل مرفوع
+  لمستودع الكود app_new)
+- 36 اختبار وحدة على المتغيّر releaseFull: خضراء كلها (0 إخفاق، 0 خطأ)
+- lintVitalReleaseFull: ناجح ضمن مسار البناء
+- فحص يدوي: لا دوال خاصة ميتة، لا واردات غير مستعملة فعلياً
+- SHA-256: 86189dea3ef7487570b7bd91cea4f009e01a27cc6f68c3b5ed369d69d90c231d
+- المصدر: SagedAMV/app_new@4155d06
