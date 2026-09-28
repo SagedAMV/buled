@@ -15,7 +15,39 @@
 - موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA
 - **التنزيل المباشر:** [إصدار v1.0.0-full](https://github.com/SagedAMV/buled/releases/latest)
 
-### التحقق العميق من البناء (الجلسة الرابعة 2026-09-28 — الحالية)
+### التحقق العميق من البناء (الجلسة الخامسة 2026-09-28 — الحالية)
+
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
+  build-tools 34.0.0، Gradle 8.9 عبر الغلاف الرسمي
+  `build-release-full.sh`، AGP 8.7.2، Kotlin 2.0.21، KSP 2.0.21-1.0.25
+  — على آلة 2GB/نواتين مع ملف Swap ‏3GB كاحتياط
+- **صفر أخطاء بناء في شيفرة التطبيق** — تحقق عميق متعدد الطبقات: مراجعة
+  يدوية (هندسة المجرّة ومحرك تخطيطها وشاشتها ونموذجها، AppModule،
+  UniHubApplication، MainActivity، المانيفست، التنقل الآمن الأنواع، قواعد
+  ProGuard/R8) + فحص دوال ميتة آلي شامل لكل ملفات الشيفرة (public و
+  internal وprivate) بصفر نتائج + بوابات الجودة الأربع
+- **وُجد خلل توثيقي واحد وأُصلح من الجذر** (بلا أثر سلوكي): تعليق
+  WorkManager في `UniHubApplication.kt` كان ينسب اكتشاف واجهة
+  `Configuration.Provider` للمهيّئ الافتراضي، بينما المهيّئ الافتراضي
+  مُزال من المانيفست (`tools:node="remove"`) والتهيئة فعلياً عند الطلب —
+  صُحِّح التعليق ليطابق الآلية الحقيقية المعتمدة (commit `85caba5` في
+  app_new، مرفوع للمستودع)
+- مراحل الغلاف كلها خضراء (نُفذت السلسلة مرتين: على الشيفرة الأصلية ثم بعد
+  التصحيح — والأرقام أدناه لبناء النسخة المُسلَّمة):
+  - `compileReleaseFullKotlin` ✅ صفر أخطاء
+  - `testReleaseFullUnitTest` ✅ (بلا مصادر اختبار — حُذفت بعد اكتمال
+    تحقق الجلسات السابقة وفق تعليمات.md)
+  - `lintVitalReleaseFull` ✅ (التحذيرات الوحيدة داخلية في أداة Lint
+    نفسها وليست في شيفرة التطبيق)
+  - `assembleReleaseFull` ✅ + محاذاة `zipalign -c 4` ✅ + توقيع
+    `apksigner verify` ✅
+- SHA-256: `c7bec37d6bceb1c0e8d4f3aedbb6ad3342865ed79834732819ade67423bcebba`
+- المصدر: [SagedAMV/app_new@85caba5](https://github.com/SagedAMV/app_new/commit/85caba5b06b72c15e15230fe1220ef49f9910eeb)
+  (رأس main الحالي)
+
+---
+
+### تحقق الجلسة السابقة (2026-09-28 — الرابعة، للتأريخ)
 
 - بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
   build-tools 34.0.0، Gradle 8.9 عبر الغلاف الرسمي
