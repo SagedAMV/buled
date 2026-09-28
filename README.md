@@ -15,27 +15,47 @@
 - موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA
 - **التنزيل المباشر:** [إصدار v1.0.0-full](https://github.com/SagedAMV/buled/releases/latest)
 
-### التحقق العميق من البناء (الجلسة الثانية 2026-09-28 — الحالية)
+### التحقق العميق من البناء (الجلسة الثالثة 2026-09-28 — الحالية)
+
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20، Android SDK platform-35 +
+  build-tools 35.0.0، Gradle 8.9 عبر الغلاف الرسمي
+  `build-release-full.sh`، AGP 8.7.2، Kotlin 2.0.21، KSP 2.0.21-1.0.25 —
+  على آلة 2GB/نواتين أُضيف لها Swap ‏2.5GB في بيئة البناء
+- **صفر أخطاء بناء هذه الجلسة** — تحقق عميق متعدد الطبقات: مراجعة يدوية
+  (AppModule، UniHubApplication، MainActivity، المانيفست وتقاطعها مع
+  المصادر، التنقل الآمن الأنواع، قواعد ProGuard/R8 ومحرك هندسة المجرة)
+  + بوابات الجودة الثلاث — فلم يلزم أي تعديل شيفرة، ولم يُدفع أي تغيير
+  إلى app_new (لا شيء تغيّر)
+- مراحل `build-release-full.sh` كلها خضراء:
+  - `compileReleaseFullKotlin` ✅ صفر أخطاء وصفر تحذيرات مترجم
+  - `testReleaseFullUnitTest` ✅ (بلا مصادر اختبار — حُذفت بعد اكتمال
+    تحقق الجلسة السابقة وفق تعليمات.md)
+  - `lintVitalReleaseFull` ✅ (التحذيرات الوحيدة داخلية في أداة Lint
+    نفسها — عدم توافق Kotlin Analysis API — وليست في شيفرة التطبيق)
+  - `assembleReleaseFull` ✅ — **BUILD SUCCESSFUL in 2m 8s**
+- العطل البيئي الوحيد: قتّال النظام قتل Daemon غرادل لحظة
+  `hiltJavaCompile` (RSS ‏1753MB على آلة بلا Swap — النمط الموثق نفسه في
+  جلسات سابقة) — أُصلح بملف Swap ‏2.5GB في بيئة البناء لا في الشيفرة،
+  وأُعيد البناء عبر الغلاف فاكتملت المرحلتان خضراوين بخبيئة غرادل
+- توقيع مُتحقَّق بـ `apksigner verify` + محاذاة `zipalign -c 4` سليمة
+- SHA-256: `a1c4b72b256af08bba161fddb35276b799f30ce8b5e5ab07f21e7c16baea1935`
+- المصدر: [SagedAMV/app_new@31f6b99](https://github.com/SagedAMV/app_new/commit/31f6b99)
+  (يتضمن تحديثات جلسات المجرة الأخيرة: 42 اختباراً أثبتت حصر الأبناء
+  داخل الدائرة الحاضنة وتقوية مصدر الحقيقة الواحد لعرض عمود الابن)
+
+---
+
+### تحقق الجلسة السابقة (2026-09-28 — الثانية، للتأريخ)
 
 - بيئة بُنيت من الصفر: OpenJDK 17.0.20، Android SDK platform-35 +
   build-tools 35.0.0 (+ 34.0.0 جلبه AGP تلقائياً)، Gradle 8.9 عبر الغلاف،
   AGP 8.7.2، Kotlin 2.0.21، KSP 2.0.21-1.0.25 — على آلة 1.9GB مع Swap ‏3GB
-- **صفر أخطاء بناء هذه الجلسة** — تحقق عميق متعدد الطبقات: فحص استاتيكي
-  يدوي (استيراد `fillMaxWidth` السليم، تقاطع كامل بين المانيفست والمصادر،
-  الموارد المرجعية، keystore/proguard، منطق النسخ التلقائي والمجرة، بلا
-  دوال ميتة ولا TODO) + بوابات الجودة الثلاث — فلم يلزم أي تعديل شيفرة
-  (تقرير الجلسة الكامل في app_new:
-  `تقرير_جلسة_التحقق_العميق_الثانية_2026-09-28.md`)
-- مراحل `build-release-full.sh` كلها خضراء:
-  - `compileReleaseFullKotlin` ✅ صفر أخطاء
-  - `testReleaseFullUnitTest` ✅ — **45 اختبار وحدة، 0 فشل، 0 خطأ، 0 تخطٍّ**
-  - `lintVitalReleaseFull` ✅
-  - `assembleReleaseFull` ✅ — **BUILD SUCCESSFUL in 2m 4s** (عبر دمج الـ
-    dex بسلام؛ ذروة Swap أثناء الترجمة ~694MB ابتلعها الملف بلا انهيار)
-- توقيع مُتحقَّق بـ `apksigner verify` + محاذاة `zipalign -c 4` سليمة
+- **صفر أخطاء بناء تلك الجلسة** — فلم يلزم أي تعديل شيفرة
+- مراحل الغلاف خضراء: compileReleaseFullKotlin ✅، 45 اختبار وحدة ✅،
+  lintVital ✅، assembleReleaseFull ✅ في 2m 4s
+- توقيع ومحاذاة مُتحقَّق منهما
 - SHA-256: `c485428af7290ef797a1464836758fb5501f3148ba73a6a606c31fdea747b367`
 - المصدر: [SagedAMV/app_new@264c2ef](https://github.com/SagedAMV/app_new/commit/264c2ef)
-  (شيفرة مطابقة لـ `aa66ee9` — التزام الجلسة توثيق فقط)
 
 ---
 
