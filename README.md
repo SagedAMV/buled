@@ -1,8 +1,42 @@
-# UniHub — APK
+# توزيع ملفات APK
 
-مستودع لتوزيع ملفات التطبيق المبنية. الكود المصدري في [SagedAMV/app_new](https://github.com/SagedAMV/app_new).
+مستودع لتوزيع ملفات التطبيقات المبنية.
 
-## النسخة الكاملة (المُسلَّمة هذه الجلسة) ⭐
+## تطبيقي (Tatbiqi) v3.1.2 — النسخة الكاملة (المُسلَّمة هذه الجلسة) ⭐
+
+**`Tatbiqi-v3.1.2-release-full.apk`** — نسخة 3.1.2 (versionCode 14) من تطبيق
+«تطبيقي» — الكود المصدري في [SagedAMV/app_doll_kotlin](https://github.com/SagedAMV/app_doll_kotlin)
+
+- نمط البناء: **release** الرسمي للمشروع — نسخة الإصدار الكاملة، موقّعة
+  بمفتاح إصدار جديد (صلاحية 10000 يوم)، التوقيع مُتحقَّق منه بـ apksigner
+- الحجم: ~4.2 MB (4,375,943 بايت)
+- المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 34
+- موقّع بشهادة: CN=Tatbiqi, OU=Personal, O=Tatbiqi, C=SA
+- SHA-256: `892eb9c22b665c085335667bc364cce4607ef33371f10a31fd251a34dcd6e484`
+- **التنزيل المباشر:** [إصدار tatbiqi-v3.1.2](https://github.com/SagedAMV/buled/releases/latest)
+
+### التحقق العميق من البناء وإصلاحاته (جلسة 2026-09-29)
+
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-34 +
+  build-tools 34.0.0، Gradle 8.9 عبر الغلاف، AGP 8.6.1، Kotlin 2.0.20،
+  KSP 2.0.20-1.0.25، Hilt 2.52 — نجح `assembleDebug` و `assembleRelease`
+  كاملاً بلا أي خطأ في شيفرة التطبيق (صفر أخطاء ترجمة في 67 ملف Kotlin)
+- **أخطاء البناء التي رُصدت وأُصلحت (مرفوعة لمستودع
+  [app_doll_kotlin](https://github.com/SagedAMV/app_doll_kotlin) — commit
+  `90d2553`):**
+  - 🔴 `google-services.json` كان في جذر المشروع بينما `google-services
+    plugin` يقرؤه حصراً من `app/` — نُقل إلى موقعه الصحيح وأُزيلت قاعدة
+    تجاهله من `.gitignore` حتى يبقى متتبعاً
+  - 🔴 لا يوجد إعداد توقيع لنسخة الإصدار إطلاقاً (الناتج كان يبقى غير
+    قابل للتثبيت) — أُنشئ `release.keystore` + `keystore.properties`
+    ورُبط `signingConfig` بـ buildType release
+  - 🟡 كومة Gradle ‏700m كانت دون حاجة ترجمة Compose+KSP+R8 — رُفعت إلى
+    1536m مع MaxMetaspace ‏512m في `gradle.properties`
+- الفحص: `apksigner verify --print-certs` ناجح على الناتج النهائي
+
+---
+
+## UniHub — النسخة الكاملة (جلسة سابقة)
 
 **`UniHub-v1.2.0-release-full.apk`** — نسخة 1.2.0 (versionCode 3)
 
