@@ -4,7 +4,7 @@
 
 ## النسخة الكاملة (المُسلَّمة هذه الجلسة) ⭐
 
-**`UniHub-v1.0.0-release-full.apk`** — نسخة 1.0.0 (versionCode 1)
+**`UniHub-v1.1.0-release-full.apk`** — نسخة 1.1.0 (versionCode 2)
 
 - نمط البناء: **releaseFull** — جودة Release نفسها (موقّعة بمفتاح الإصدار
   `unihub-release.jks`، توقيع مُتحقَّق منه بـ apksigner، محازة zipalign
@@ -13,9 +13,41 @@
 - الحجم: ~13.3 MB (13,959,321 بايت)
 - المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 35
 - موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA
-- **التنزيل المباشر:** [إصدار v1.0.0-full](https://github.com/SagedAMV/buled/releases/latest)
+- **التنزيل المباشر:** [إصدار v1.1.0-full](https://github.com/SagedAMV/buled/releases/latest)
 
-### التحقق العميق من البناء (الجلسة الخامسة 2026-09-28 — الحالية)
+### التحقق العميق من البناء (الجلسة السادسة 2026-09-29 — الحالية)
+
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
+  build-tools 34.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
+  KSP 2.0.21-1.0.25 — على آلة 2GB/نواتين؛ عند بلوغ ذروة
+  `mergeExtDexReleaseFull` في المحاولة الأولى قتل قتّال النظام الدايمون
+  («Gradle build daemon disappeared unexpectedly» الموثّقة في
+  gradle.properties) فأُصلح من الجذر بملف Swap ‏2GB في بيئة البناء (لا في
+  الشيفرة — نهج الجلسة المستقلة نفسه)، واكتمل البناء بعدها مستقراً
+- **صفر أخطاء بناء في شيفرة التطبيق** — تحقق عميق: بوابات الجودة
+  (compile/test/lintVital/assemble) + مسح `lintReleaseFull` الشامل:
+  صفر خطأ، و46 تحذيراً غير حاسم كلها إشعارات (إصدارات أحدث للمكتبات
+  GradleDependency×40، وAutoboxingStateCreation×7،
+  وObsoleteLintCustomCheck×3، وAndroidGradlePluginVersion×2،
+  وObsoleteSdkInt×1) — بلا أثر على البناء أو السلوك، فلم تُمَس شيفرة
+  التطبيق
+- **التعديل الوحيد:** رفع رقم الإصدار إلى 1.1.0 (versionCode 2) وفق طلب
+  المستخدم (commit `b3758a5` في app_new، مرفوع للمستودع)
+- مراحل الغلاف كلها خضراء:
+  - `compileReleaseFullKotlin` ✅ صفر أخطاء (BUILD SUCCESSFUL in 5m 39s)
+  - `testReleaseFullUnitTest` ✅ (بلا مصادر اختبار — حُذفت بعد اكتمال
+    تحقق الجلسات السابقة وفق تعليمات.md)
+  - `lintVitalReleaseFull` ✅ + `lintReleaseFull` الشامل ✅ صفر خطأ
+  - `assembleReleaseFull` ✅ — BUILD SUCCESSFUL in 55s + محاذاة
+    `zipalign -c 4` ✅ + توقيع `apksigner verify` ✅
+- SHA-256: `ea5ea648c1259f20772f33bcb0d449273ed5a2a027c063a50794b0153081f063`
+- المصدر: [SagedAMV/app_new@b3758a5](https://github.com/SagedAMV/app_new/commit/b3758a560dab593ab472e4058301893f785d4031)
+  (رأس main الحالي — يتضمن كل جلسات المجرة والنسخ الاحتياطي والتحقيق
+  السابقة)
+
+---
+
+### تحقق الجلسة السابقة (2026-09-28 — الخامسة، للتأريخ)
 
 - بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
   build-tools 34.0.0، Gradle 8.9 عبر الغلاف الرسمي
