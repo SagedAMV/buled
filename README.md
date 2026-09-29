@@ -4,7 +4,7 @@
 
 ## النسخة الكاملة (المُسلَّمة هذه الجلسة) ⭐
 
-**`UniHub-v1.1.0-release-full.apk`** — نسخة 1.1.0 (versionCode 2)
+**`UniHub-v1.2.0-release-full.apk`** — نسخة 1.2.0 (versionCode 3)
 
 - نمط البناء: **releaseFull** — جودة Release نفسها (موقّعة بمفتاح الإصدار
   `unihub-release.jks`، توقيع مُتحقَّق منه بـ apksigner، محازة zipalign
@@ -13,10 +13,49 @@
 - الحجم: ~13.3 MB (13,959,321 بايت)
 - المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 35
 - موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA
-- **التنزيل المباشر:** [إصدار v1.1.0-full](https://github.com/SagedAMV/buled/releases/latest)
+- **التنزيل المباشر:** [إصدار v1.2.0-full](https://github.com/SagedAMV/buled/releases/latest)
 
-### التحقق العميق من البناء (الجلسة السادسة 2026-09-29 — الحالية)
+### التحقق العميق من البناء (الجلسة السابعة 2026-09-29 — الحالية)
 
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
+  build-tools 35.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
+  KSP 2.0.21-1.0.25 — على آلة 1.99GB/نواتين **بلا Swap**؛ عند بلوغ ذروة
+  `mergeDexReleaseFull` في المحاولة الأولى قتل قتّال النظام الدايمون
+  («Gradle build daemon disappeared unexpectedly» الموثّقة في
+  gradle.properties) — وأُصلح هذه المرة **من الجذر في الإعدادات لا بملف
+  Swap**: خُفضت كومة Daemon غرادل من 1024m إلى 832m (ذروة الترجمة الفعلية
+  دون 700m كما وثّقت الجلسات السابقة، فالخفض آمن) مع توثيق التشخيص كاملاً
+  في `gradle.properties` (commit `a114b80` في app_new)، فاكتمل البناء
+  بعدها مستقراً بلا Swap إطلاقاً
+- **صفر أخطاء بناء في شيفرة التطبيق** — تحقق عميق: بوابات الجودة
+  (compile/test/lintVital) + فحص يدوي شامل: صفر دوال ميتة (مسح آلي لكل
+  دوال public/internal/private)، صفر TODO/FIXME، صفر force-unwrap (`!!`)،
+  ومراجعة يدوية للملفات المركزية (UniHubApplication، AppModule،
+  MainActivity، محرك تخطيط المجرة، المانيفست) — فلم يلزم أي تعديل في
+  شيفرة التطبيق نفسها
+- **التعديلات (مرفوعة لمستودع app_new):**
+  - رفع رقم الإصدار إلى 1.2.0 (versionCode 3) وفق طلب المستخدم
+    (commit `998ca7c`)
+  - إصلاح انقطاع البناء الموثّق أعلاه: كومة Daemon ‏1024m → 832m في
+    `gradle.properties` (commit `a114b80`)
+- مراحل الغلاف كلها خضراء:
+  - `compileReleaseFullKotlin` ✅ صفر أخطاء
+  - `testReleaseFullUnitTest` ✅ (بلا مصادر اختبار — حُذفت بعد اكتمال
+    تحقق الجلسات السابقة وفق تعليمات.md)
+  - `lintVitalReleaseFull` ✅
+  - `assembleReleaseFull` ✅ — BUILD SUCCESSFUL in 33s + محاذاة
+    `zipalign -c 4` ✅ + توقيع `apksigner verify` ✅ (مخطط v2، موقّع واحد)
+- SHA-256: `62e949d88b36e9beb5255f6563a193e2348c443be9ea7f810f886c0c2107ce60`
+- المصدر: [SagedAMV/app_new@a114b80](https://github.com/SagedAMV/app_new/commit/a114b80)
+  (رأس main الحالي — يتضمن رفع الإصدار وإصلاح كومة Daemon لهذه الجلسة
+  وكل جلسات المجرة والنسخ الاحتياطي السابقة)
+
+---
+
+### تحقق الجلسة السابقة (2026-09-29 — السادسة، للتأريخ)
+
+- سلّمت النسخة الكاملة **UniHub v1.1.0** (versionCode 2) باسم
+  `UniHub-v1.1.0-release-full.apk`
 - بيئة بُنيت من الصفر: OpenJDK 17.0.20.1، Android SDK platform-35 +
   build-tools 34.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
   KSP 2.0.21-1.0.25 — على آلة 2GB/نواتين؛ عند بلوغ ذروة
@@ -42,8 +81,6 @@
     `zipalign -c 4` ✅ + توقيع `apksigner verify` ✅
 - SHA-256: `ea5ea648c1259f20772f33bcb0d449273ed5a2a027c063a50794b0153081f063`
 - المصدر: [SagedAMV/app_new@b3758a5](https://github.com/SagedAMV/app_new/commit/b3758a560dab593ab472e4058301893f785d4031)
-  (رأس main الحالي — يتضمن كل جلسات المجرة والنسخ الاحتياطي والتحقيق
-  السابقة)
 
 ---
 
