@@ -36,6 +36,47 @@
 
 ---
 
+## UniHub v1.3.1 — النسخة الكاملة (المُسلَّمة هذه الجلسة) ⭐
+
+**`UniHub-v1.3.1-release-full.apk`** — نسخة 1.3.1 (versionCode 5) — الكود
+المصدري في [SagedAMV/app_new](https://github.com/SagedAMV/app_new)
+
+- نمط البناء: **releaseFull** — جودة Release نفسها (موقّعة بمفتاح الإصدار
+  `unihub-release.jks`، توقيع مُتحقَّق منه بـ apksigner، محازاة zipalign
+  مُتحقَّق منها) **بلا تصغير شيفرة ولا تصغير موارد** (R8 معطّل) — النسخة
+  الكاملة فقط، وفق طلب المستخدم.
+- الحجم: ~13.5 MB (14,172,345 بايت)
+- المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 35
+- موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA (بصمة SHA-256
+  `5109c404c5cd4d207d0ee0dc1f1ed77b58fd0269b28d8fc2520aaff1a36b74ca` —
+  مفتاح المستودع نفسه، تحديث فوق التثبيت للتسليمات السابقة)
+- SHA-256: `66e5697ef1b23e32e9a68ed14025b275d2ebde4ad6ebc6c2d858a25820e79966`
+
+### التحقق العميق من البناء وإصلاحاته (جلسة 2026-10-01)
+
+- بيئة بُنيت من الصفر: OpenJDK 17.0.20، Android SDK platform-35 +
+  build-tools 34.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
+  KSP 2.0.21-1.0.25 — على آلة 2GB بلا Swap؛ ضبط الذاكرة الموثق في
+  gradle.properties (كومة 832m + SerialGC + in-process) عمل كما صُمم ولم
+  ينقطع البناء في أي مرحلة.
+- **خطأ البناء الذي رُصد وأُصلح (مرفوع لمستودع
+  [app_new](https://github.com/SagedAMV/app_new) — commit `1e2322f`):**
+  - 🔴 4 اختبارات فاشلة في `DestinationFolderTreeTest` (شجرة وجهة التنزيل)
+    — الجذر في `DestinationFolderTree.kt`: المسح التكميلي كان يرقّي أبناء
+    المجلدات المطوية إلى المستوى الأعلى، و`childrenOf` كان يعيد الفرز
+    فيمسح ترتيب المصدر. الإصلاح: ترشيح مستقر + مسح يرقّي غير القابل
+    للبلوغ فقط (أب مفقود أو دورة parentId) — الاختبارات الثمانية خضراء
+    دون تعديل عليها.
+  - 🟡 `gradlew` وغلاف البناء بلا بت تنفيذ (Permission denied عند أي استنساخ
+    جديد) — أُعيد بت التنفيذ لهما.
+- البوابات الأربع خضراء: compile (3m33s) → tests (125 اختباراً، صفر فشل،
+  3 متخطاة = اختبارات R2 الحية المعطلة افتراضياً) → lintVital →
+  assemble (2m26s). فحص يدوي: صفر force-unwrap، صفر TODO/FIXME، صفر
+  تحذيرات مترجم. التفاصيل في `verification/deep-check-2026/` بمستودع
+  app_new.
+
+---
+
 ## UniHub — النسخة الكاملة (جلسة سابقة)
 
 **`UniHub-v1.2.0-release-full.apk`** — نسخة 1.2.0 (versionCode 3)
