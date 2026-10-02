@@ -45,35 +45,58 @@
   `unihub-release.jks`، توقيع مُتحقَّق منه بـ apksigner، محازاة zipalign
   مُتحقَّق منها) **بلا تصغير شيفرة ولا تصغير موارد** (R8 معطّل) — النسخة
   الكاملة فقط، وفق طلب المستخدم.
-- الحجم: ~13.5 MB (14,172,345 بايت)
+- الحجم: ~13.5 MB (14,188,729 بايت)
 - المتطلبات: Android 8.0+ (minSdk 26) — compileSdk/targetSdk 35
 - موقّع بشهادة: CN=UniHub, OU=Personal, O=UniHub, C=SA (بصمة SHA-256
   `5109c404c5cd4d207d0ee0dc1f1ed77b58fd0269b28d8fc2520aaff1a36b74ca` —
   مفتاح المستودع نفسه، تحديث فوق التثبيت للتسليمات السابقة)
-- SHA-256: `66e5697ef1b23e32e9a68ed14025b275d2ebde4ad6ebc6c2d858a25820e79966`
+- SHA-256: `cf8246abd6d7ba9de7cec7dd3d34640c093186b6ae1a54db3d94f109ef826e0b`
+- **التنزيل المباشر:** [إصدار v1.3.1-full](https://github.com/SagedAMV/buled/releases/tag/v1.3.1-full)
 
-### التحقق العميق من البناء وإصلاحاته (جلسة 2026-10-01)
+### التحقق العميق من البناء وإصلاحاته (جلسة 2026-10-02 — بوابات موسّعة)
 
-- بيئة بُنيت من الصفر: OpenJDK 17.0.20، Android SDK platform-35 +
-  build-tools 34.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
-  KSP 2.0.21-1.0.25 — على آلة 2GB بلا Swap؛ ضبط الذاكرة الموثق في
-  gradle.properties (كومة 832m + SerialGC + in-process) عمل كما صُمم ولم
-  ينقطع البناء في أي مرحلة.
-- **خطأ البناء الذي رُصد وأُصلح (مرفوع لمستودع
-  [app_new](https://github.com/SagedAMV/app_new) — commit `1e2322f`):**
-  - 🔴 4 اختبارات فاشلة في `DestinationFolderTreeTest` (شجرة وجهة التنزيل)
-    — الجذر في `DestinationFolderTree.kt`: المسح التكميلي كان يرقّي أبناء
-    المجلدات المطوية إلى المستوى الأعلى، و`childrenOf` كان يعيد الفرز
-    فيمسح ترتيب المصدر. الإصلاح: ترشيح مستقر + مسح يرقّي غير القابل
-    للبلوغ فقط (أب مفقود أو دورة parentId) — الاختبارات الثمانية خضراء
-    دون تعديل عليها.
-  - 🟡 `gradlew` وغلاف البناء بلا بت تنفيذ (Permission denied عند أي استنساخ
-    جديد) — أُعيد بت التنفيذ لهما.
-- البوابات الأربع خضراء: compile (3m33s) → tests (125 اختباراً، صفر فشل،
-  3 متخطاة = اختبارات R2 الحية المعطلة افتراضياً) → lintVital →
-  assemble (2m26s). فحص يدوي: صفر force-unwrap، صفر TODO/FIXME، صفر
-  تحذيرات مترجم. التفاصيل في `verification/deep-check-2026/` بمستودع
-  app_new.
+- بيئة بُنيت من الصفر: OpenJDK 21.0.12.1، Android SDK platform-35 +
+  build-tools 35.0.0، Gradle 8.9 عبر الغلاف، AGP 8.7.2، Kotlin 2.0.21،
+  KSP 2.0.21-1.0.25 — على آلة 2GB؛ وضبط الذاكرة الموثّق في gradle.properties
+  بقي كما هو ولم يُلمس (مسار النسخة الكاملة يعمل به كما صُمم).
+- **جديدة هذه الجلسة:** وسّعت الجلسة البوابات عن كل الجلسات السابقة فأضافت
+  lint الكامل (لا lintVital فقط) و`assembleRelease` المصغّرة (R8) و
+  `assembleDebug` — فظهرت ثلاثة أخطاء حقيقية كانت خارج مدى الفحص القديم،
+  أُصلحت كلها ورُفعت إلى [app_new](https://github.com/SagedAMV/app_new)
+  (commit `e1b6782`):
+  - 🔴 **خطأ بناء فعلي**: `assembleRelease` كان يفشل بـ
+    `ERROR: R8: java.lang.OutOfMemoryError: Java heap space` عند الكومة
+    832m الموثّقة (R8 يعمل داخل عملية Gradle نفسها فتحدّه كومة الـ Daemon).
+    الإصلاح: غلاف `build-release-minified.sh` يتجاوز الكومة لهذا البناء وحده
+    عبر `-Dorg.gradle.jvmargs` مع ملاحظة موثّقة في gradle.properties حمايةً
+    لمسار النسخة الكاملة على الأجهزة الضيقة. بعد الإصلاح: نجح (6m9s) وأنتج
+    حزمة مصغّرة 3,031,191 بايت موقّعة ومحازاة.
+  - 🔴 **خطأ lint بمستوى Error — MissingPermission**: عرض إشعار الملفات
+    الجديدة بلا فحص صريح لإذن POST_NOTIFICATIONS على أندرويد 13+؛ أُضيف
+    الفحص الصريح المحروس بفحص الإصدار.
+  - 🔴 **خطأ lint بمستوى Error — RestrictedApi**: استدعاء Room المقيّد
+    `refreshVersionsSync` في حارس منع حلقة الرفع؛ بقي عمداً مع تجاوز موثّق
+    لأن تحقق بايت كود Room أثبت أن البديل العام (`refreshVersionsAsync`)
+    يؤجل إشعارات المعاملة إلى ما بعد إنهاء الحارس فيعيد مراقب التغيير رفع ما
+    نزل للتو.
+  - 🧹 **تنظيف بفحص آلي معمّق + تحقق يدوي**: حذف 4 دوال ميتة بلا أي موضع
+    استدعاء في كل الشيفرة (`exportToFile`/`importFromFile`،
+    `fetchRemoteMeta` + `RemoteBackupMeta`، `markUploadPending`) وحالة
+    `lastRemoteApplyFinishedAt` التي تُكتب ولا تُقرأ، وimports يتيمة،
+    و`mipmap-anydpi-v26` → `mipmap-anydpi` (minSdk=26)، ونقل إصدار
+    `org.json` إلى كتالوج الإصدارات، وتحويل 7 حالات Compose إلى الأنواع
+    البدائية (`mutable*StateOf`).
+- النتيجة: **صفر أخطاء lint** (كان خطأين)، صفر تحذيرات كوتلن، صفر دوال ميتة،
+  والبوابات كلها خضراء: compile (1m36s) → tests (146 ناجحاً، صفر فشل،
+  3 متخطاة = اختبارات R2 الحية بتصميمها) → lint كامل (1m48s) → releaseFull
+  (3m12s) → المصغّرة (6m9s) → debug (4m23s).
+- تحقق الحزمة النهائية: badging (`com.unihub.app` v1.3.1/code 5، minSdk 26،
+  targetSdk 35) + zipalign + apksigner + **فحص dex بـ apkanalyzer**: مُنشئات
+  Room المولّدة (`UniHubDatabase_Impl` و`WorkDatabase_Impl` بمُنشئ بلا وسائط)
+  حاضرة — السبب الجذري لكراش الإقلاع التاريخي غائب — والدوال المحذوفة لا أثر
+  لها في الـ dex النهائي.
+- التفاصيل الكاملة في `verification/independent-build-deep-check-2026-10-02/`
+  بمستودع app_new.
 
 ---
 
